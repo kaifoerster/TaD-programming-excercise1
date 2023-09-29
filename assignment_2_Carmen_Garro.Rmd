@@ -1,0 +1,103 @@
+---
+title: "assignment-2-Carmen_Garro"
+author: "Garro"
+date: "2023-09-29"
+output: html_document
+---
+
+```{r}
+library(rvest)
+library(tidyverse)
+```
+
+1.1 Choose one of the sessions, and retrieve it using R or Python.
+
+```{r}
+website <- read_html("https://www.bundestag.de/resource/blob/968690/5d723616da1ea3ca054e8da604ff1004/20124-data.xml")
+```
+
+
+1.2 Using a scraper, get a list of all the elements.
+
+```{r}
+elements <- website %>% html_elements("rede")
+```
+
+1.3 For each element, get the name of the speaker, and a single string containing everything that they said. Put this into a dataframe.
+
+```{r}
+#elements[1]
+data <- data.frame(cbind("Name" = character(0),
+              "Speech" = character(0)))
+for(element in elements){
+    name = paste(html_text(html_element(element,"p vorname")),html_text(html_element(element,"p nachname")))
+    first = html_text(html_element(element,"p[klasse='J_1']"))
+    rest =  html_text(html_elements(element, "p[klasse = 'J']"))
+    for(par in rest){
+      first = paste(first,par)
+    }
+    data <- data %>% add_row(Name = name,
+                             Speech = first)
+  }
+
+head(data)
+```
+
+
+2.1 Choose a politician, and print the number of speeches they made in this session
+
+```{r}
+data %>% group_by(Name) %>% summarize(count = n()) %>% arrange(-count) %>% filter(Name == "Svenja Schulze")
+```
+
+2.2 Print the content of the first speech by the politician you choose.
+
+```{r}
+svenja_speech <- data %>% filter(Name == "Svenja Schulze")
+svenja_speech[1,2]
+```
+2.3 Process the list of speeches into a TFIDF matrix. What are the highest scoring terms in this matrix for the first speech by the politician you have chosen?
+
+```{r}
+#install.packages("quanteda")
+#install.packages("lexicon")
+library(quanteda)
+#library(lexicon)
+```
+
+```{r}
+processed_text <- svenja_speech %>% 
+  select(Speech) %>%
+  unlist() %>% 
+  tokens(remove_punc = TRUE) %>% 
+  tokens_remove((pattern=stopwords("de"))) %>% 
+  tokens_wordstem(language = "german") %>%
+  dfm() %>% 
+  dfm_tfidf()
+
+topfeatures(processed_text,11)
+```
+
+2.4 Using the resource “Stammdaten aller Abgeordneten seit 1949 im XML-Format”, retrieve the records pertaining to your chosen politician and print the information they contain.
+
+```{r}
+library(XML)
+#install.packages("xml2")
+library(xml2)
+```
+
+
+```{r}
+
+download.file("https://www.bundestag.de/resource/blob/472878/a4859899e44a7cab1a8233e5dd69f2f3/MdB-Stammdaten-data.zip", "temp")
+xml_data <- unzip(temp)
+data <- read_xml(xml_data[2])
+
+data
+```
+
+
+
+
+
+
