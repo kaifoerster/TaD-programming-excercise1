@@ -1,0 +1,43 @@
+## 1.1 (1)
+
+Grade: 100
+
+Yes, looks like you completed this before the website became unscrapable
+
+## 1.2 (1)
+
+Grade: 100
+
+Yes
+
+## 1.3 (5)
+
+Grade: 100
+
+Excellent, this works!
+
+## 2.1 (2)
+
+Grade: 100
+
+Good
+
+## 2.2 (2)
+
+Grade: 100
+
+Yes
+
+## 2.3 (4)
+
+Grade: 100
+
+Nice work
+
+## 2.4 (2)
+
+Grade: 100
+
+Interesting method, nice to get the record in a jsonlike format
+
+## Total grade: 100
